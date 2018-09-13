@@ -2,9 +2,10 @@
 
 namespace common\models;
 
-use Yii;
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "project".
@@ -24,6 +25,15 @@ use yii\behaviors\TimestampBehavior;
  */
 class Project extends \yii\db\ActiveRecord
 {
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_LIST = [
+        self::STATUS_INACTIVE => 'неактивен',
+        self::STATUS_ACTIVE => 'активен'
+    ];
+
+    const RELATION_PROJECT_USERS = 'projectUsers';
+
     /**
      * {@inheritdoc}
      */
@@ -36,7 +46,11 @@ class Project extends \yii\db\ActiveRecord
     {
         return [
             ['class' => TimestampBehavior::class],
-            ['class' => BlameableBehavior::class]
+            ['class' => BlameableBehavior::class],
+            [
+                'class' => SaveRelationsBehavior::class,
+                'relations' => ['projectUsers']
+            ]
         ];
     }
 
@@ -56,6 +70,7 @@ class Project extends \yii\db\ActiveRecord
         ];
     }
 
+
     /**
      * {@inheritdoc}
      */
@@ -63,12 +78,14 @@ class Project extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'created_by' => 'Created By',
-            'updated_by' => 'Updated By',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'title' => 'Название',
+            'description' => 'Описание',
+            'active' => 'Состояние проекта',
+            'projectUsers' => 'Участники проекта',
+            'created_by' => 'Кем создан',
+            'updated_by' => 'Кем изменён',
+            'created_at' => 'Дата создания',
+            'updated_at' => 'Дата изменения'
         ];
     }
 
@@ -104,4 +121,17 @@ class Project extends \yii\db\ActiveRecord
     {
         return new \common\models\query\ProjectQuery(get_called_class());
     }
+
+//    public function getUserList ()
+//    {
+//        $userList = [];
+//        $projectUsers = $this->getProjectUsers();
+//
+//        foreach ($projectUsers as $item) {
+//
+//        }
+//
+//        return $userList;
+//    }
+
 }

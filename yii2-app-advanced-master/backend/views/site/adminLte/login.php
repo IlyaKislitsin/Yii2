@@ -27,20 +27,7 @@ $fieldOptions2 = [
     <div class="login-box-body">
         <p class="login-box-msg">Sign in to start your session</p>
 
-        <?php $form = ActiveForm::begin([
-                'layout' => 'horizontal',
-                'fieldConfig' => ['template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
-                'horizontalCssClasses' => [
-                    'label' => 'col-sm-4',
-                    'offset' => 'col-sm-offset-4',
-                    'wrapper' => 'col-sm-8',
-                    'error' => '',
-                    'hint' => '',
-                    ],
-                ],
-                'id' => 'login-form',
-                'enableClientValidation' => false
-        ]); ?>
+        <?php $form = ActiveForm::begin(['id' => 'login-form', 'enableClientValidation' => false]); ?>
 
         <?= $form
             ->field($model, 'username', $fieldOptions1)

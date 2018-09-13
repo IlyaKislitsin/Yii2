@@ -16,12 +16,29 @@ use Yii;
  */
 class ProjectUser extends \yii\db\ActiveRecord
 {
+    const ROLE_DEVELOPER = 'developer';
+    const ROLE_MANAGER = 'manager';
+    const ROLE_TESTER = 'tester';
+    const ROLE_LIST = [
+        self::ROLE_DEVELOPER => 'разработчик',
+        self::ROLE_MANAGER => 'менеджер',
+        self::ROLE_TESTER => 'тестировщик'
+
+    ];
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'project_user';
+    }
+
+    /**
+     * @return array|string[]
+     */
+    public static function primaryKey()
+    {
+        return ['project_id', 'user_id'];
     }
 
     /**

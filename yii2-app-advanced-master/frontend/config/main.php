@@ -13,6 +13,9 @@ return [
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ],
             'csrfParam' => '_csrf-frontend',
         ],
         'user' => [
@@ -38,11 +41,21 @@ return [
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
+            'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
-                '<controller:[\w-]+>/<id:\d+>'  => '<controller>/view',
-                '<controller:[\w-]+>s'          => '<controller>/index'
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => ['api/user', 'api/project']
+                ],
+                '<controller:[\w-]+>/<id:\d+>'      => '<controller>/view',
+                '<controller:(user|project|task)>s' => '<controller>/index',
             ],
+        ],
+    ],
+    'modules' => [
+        'api' => [
+            'class' => 'frontend\modules\api\Api',
         ],
     ],
     'params' => $params,

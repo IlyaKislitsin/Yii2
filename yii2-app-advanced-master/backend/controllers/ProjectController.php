@@ -2,9 +2,12 @@
 
 namespace backend\controllers;
 
+use common\models\User;
 use Yii;
 use common\models\Project;
 use backend\models\ProjectSearch;
+use yii\db\mysql\QueryBuilder;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -53,7 +56,7 @@ class ProjectController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($id)
         ]);
     }
 
@@ -85,16 +88,19 @@ class ProjectController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+//        $projectUsers = $model->getUserList();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $users = User::find()->select('username')->indexBy('id')->column();
+
+        if ($this->loadModel($model) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'users' => $users
         ]);
     }
-
     /**
      * Deletes an existing Project model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -123,5 +129,15 @@ class ProjectController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function loadModel(Project $model)
+    {
+        $data = Yii::$app->request->post($model->formName());
+        $projectUsers = $data[Project::RELATION_PROJECT_USERS];
+        if ($projectUsers !== null) {
+            $model->projectUsers = $projectUsers === '' ? [] : $projectUsers;
+        }
+        return $model->load(Yii::$app->request->post());
     }
 }
