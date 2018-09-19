@@ -5,7 +5,6 @@ namespace common\models;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
-use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "project".
@@ -22,6 +21,7 @@ use yii\helpers\VarDumper;
  * @property User $createdBy
  * @property User $updatedBy
  * @property ProjectUser[] $projectUsers
+ * @property array $roles
  */
 class Project extends \yii\db\ActiveRecord
 {
@@ -39,7 +39,7 @@ class Project extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'project';
+        return '{{%project}}';
     }
 
     public function behaviors()
@@ -49,7 +49,7 @@ class Project extends \yii\db\ActiveRecord
             ['class' => BlameableBehavior::class],
             [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['projectUsers']
+                'relations' => [self::RELATION_PROJECT_USERS]
             ]
         ];
     }
@@ -60,13 +60,14 @@ class Project extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'created_by', 'created_at'], 'required'],
+            [['title', 'description'], 'required'],
             [['description'], 'string'],
             [['active'], 'boolean'],
-            [['created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['title'], 'string', 'max' => 255],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
+            [['active'], 'default', 'value' => self::STATUS_ACTIVE],
         ];
     }
 
@@ -82,12 +83,14 @@ class Project extends \yii\db\ActiveRecord
             'description' => 'Описание',
             'active' => 'Состояние проекта',
             'projectUsers' => 'Участники проекта',
+            'roles' => 'Роли в проекте',
             'created_by' => 'Кем создан',
             'updated_by' => 'Кем изменён',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата изменения'
         ];
     }
+
 
     /**
      * @return \yii\db\ActiveQuery
@@ -122,16 +125,13 @@ class Project extends \yii\db\ActiveRecord
         return new \common\models\query\ProjectQuery(get_called_class());
     }
 
-//    public function getUserList ()
-//    {
-//        $userList = [];
-//        $projectUsers = $this->getProjectUsers();
-//
-//        foreach ($projectUsers as $item) {
-//
-//        }
-//
-//        return $userList;
-//    }
+    /**
+     * @return array
+     */
+    public function getUserList ()
+    {
+        $projectUsers = $this->getProjectUsers()->select('role')->indexBy('user_id')->column();
+        return $projectUsers;
+    }
 
 }

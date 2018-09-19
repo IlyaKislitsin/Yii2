@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model common\models\Project */
 
 $this->title = 'Проект: ' . $model->title;
-$this->params['breadcrumbs'][] = ['label' => 'Проект', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Проекты', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="project-view">

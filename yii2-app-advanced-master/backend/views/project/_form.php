@@ -1,7 +1,6 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
 use unclead\multipleinput\MultipleInput;
 
 /* @var $this yii\web\View */
@@ -16,13 +15,13 @@ use unclead\multipleinput\MultipleInput;
         'layout' => 'horizontal'
     ]); ?>
 
-    <?php $form = ActiveForm::begin(); ?>
-
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'active')->dropDownList(\common\models\Project::STATUS_LIST) ?>
+
+    <?php if (!($model->isNewRecord)): ?>
 
     <?= $form->field($model, \common\models\Project::RELATION_PROJECT_USERS)->widget(MultipleInput::className(),
         //https://github.com/unclead/yii2-multiple-input/wiki/Usage
@@ -52,12 +51,12 @@ use unclead\multipleinput\MultipleInput;
             ]
         ]) ?>
 
-
+    <?php endif; ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+    <?php \yii\bootstrap\ActiveForm::end(); ?>
 
 </div>

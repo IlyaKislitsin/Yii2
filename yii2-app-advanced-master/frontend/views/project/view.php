@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /* @var $model common\models\Project */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => 'Projects', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Проекты', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="project-view">
@@ -15,14 +15,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
     </p>
 
     <?= DetailView::widget([
@@ -31,10 +23,28 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'description:ntext',
-            'created_by',
-            'updated_by',
-            'created_at',
-            'updated_at',
+            [
+                'attribute' => 'active',
+                'value'     => function (\common\models\Project $model) {
+                    return  \common\models\Project::STATUS_LIST[$model->active];
+                }
+            ],
+            [
+                'attribute' => 'created_by',
+                'value'     => function (\common\models\Project $model) {
+                    $user = \common\models\User::find()->where(['id' => $model->created_by])->one();
+                    return  $user->username;
+                }
+            ],
+            'created_at:datetime',
+            [
+                'attribute' => 'updated_by',
+                'value'     => function (\common\models\Project $model) {
+                    $user = \common\models\User::find()->where(['id' => $model->updated_by])->one();
+                    return  $user->username;
+                }
+            ],
+            'updated_at:datetime',
         ],
     ]) ?>
 

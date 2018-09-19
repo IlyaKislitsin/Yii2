@@ -6,7 +6,6 @@ use common\models\User;
 use Yii;
 use common\models\Project;
 use backend\models\ProjectSearch;
-use yii\db\mysql\QueryBuilder;
 use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -26,7 +25,7 @@ class ProjectController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['POST']
                 ],
             ],
         ];
@@ -88,11 +87,17 @@ class ProjectController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-//        $projectUsers = $model->getUserList();
+        $projectUsers = $model->getUserList();
 
         $users = User::find()->select('username')->indexBy('id')->column();
 
         if ($this->loadModel($model) && $model->save()) {
+            $changes = array_diff_assoc($model->getUserList(), $projectUsers);
+            if($changes){
+                foreach($changes as $userId => $role) {
+                    Yii::$app->projectService->assignRole($model, User::findOne($userId), $role) ;
+                }
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -101,6 +106,16 @@ class ProjectController extends Controller
             'users' => $users
         ]);
     }
+
+
+    public function actionTest()
+    {
+        $model = $this->findModel(1);
+        $projectUsers = $model->getUserList();
+        return VarDumper::dumpAsString($projectUsers, 10, true);
+    }
+
+
     /**
      * Deletes an existing Project model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

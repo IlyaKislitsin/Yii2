@@ -7,6 +7,7 @@ $params = array_merge(
 );
 
 return [
+    'language' => 'ru-RU',
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
@@ -41,7 +42,7 @@ return [
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'enableStrictParsing' => true,
+//            'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
                 [
