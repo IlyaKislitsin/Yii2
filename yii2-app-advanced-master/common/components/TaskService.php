@@ -55,7 +55,7 @@ class TaskService extends Component
      */
     public function takeTask(Task $task, User $user)
     {
-        $task->started_at = $_SERVER['REQUEST_TIME'];
+        $task->started_at = time();
         $task->executor_id = $user->id;
         if($task->update()) {
             return true;

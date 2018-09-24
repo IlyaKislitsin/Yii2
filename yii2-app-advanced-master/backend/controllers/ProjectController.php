@@ -5,7 +5,7 @@ namespace backend\controllers;
 use common\models\User;
 use Yii;
 use common\models\Project;
-use backend\models\ProjectSearch;
+use common\models\ProjectSearch;
 use yii\filters\AccessControl;
 use yii\helpers\VarDumper;
 use yii\web\Controller;

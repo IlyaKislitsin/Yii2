@@ -2,10 +2,9 @@
 
 namespace frontend\controllers;
 
-use common\models\ProjectUser;
 use Yii;
 use common\models\Task;
-use frontend\models\TaskSearch;
+use common\models\TaskSearch;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;

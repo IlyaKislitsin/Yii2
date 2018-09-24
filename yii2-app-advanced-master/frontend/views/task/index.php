@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel frontend\models\TaskSearch */
+/* @var $searchModel common\models\TaskSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $developers array */
 /* @var $managers array */

@@ -2,15 +2,12 @@
 
 namespace frontend\controllers;
 
-use common\models\Task;
 use common\models\User;
-use frontend\models\ProjectSearch;
-use tests\models\ProjectUser;
+use common\models\ProjectSearch;
 use Yii;
 use common\models\Project;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
-use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -83,17 +80,16 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function actionTest()
-    {
-        return VarDumper::dumpAsString(Yii::$app->taskService->canComplete(
-            Task::findOne(1),
-            User::findOne(3)),
-            10, true);
+//    public function actionTest()
+//    {
+//        return VarDumper::dumpAsString(Yii::$app->taskService->canComplete(
+//            Task::findOne(1),
+//            User::findOne(3)),
+//            10, true);
 //        return VarDumper::dumpAsString($project = \common\models\Project::find()->select('title')
 //            ->andWhere(['id' => 1])->column(), 10, true);
-//        return $_SERVER['REQUEST_TIME'];
-
-    }
+//
+//    }
 
 
     /**

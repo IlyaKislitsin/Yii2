@@ -1,16 +1,16 @@
 <?php
 
-namespace frontend\models;
+namespace common\models;
 
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Project;
+use common\models\Task;
 
 /**
- * ProjectSearch represents the model behind the search form of `common\models\Project`.
+ * TaskSearch represents the model behind the search form of `common\models\Task`.
  */
-class ProjectSearch extends Project
+class TaskSearch extends Task
 {
     /**
      * {@inheritdoc}
@@ -18,7 +18,7 @@ class ProjectSearch extends Project
     public function rules()
     {
         return [
-            [['id', 'created_by', 'updated_by', 'active', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'estimation', 'project_id', 'executor_id', 'started_at', 'completed_at', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['title', 'description'], 'safe'],
         ];
     }
@@ -41,7 +41,7 @@ class ProjectSearch extends Project
      */
     public function search($params)
     {
-        $query = Project::find();
+        $query = Task::find();
 
         // add conditions that should always apply here
 
@@ -60,7 +60,11 @@ class ProjectSearch extends Project
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'active' => $this->active,
+            'estimation' => $this->estimation,
+            'project_id' => $this->project_id,
+            'executor_id' => $this->executor_id,
+            'started_at' => $this->started_at,
+            'completed_at' => $this->completed_at,
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,
             'created_at' => $this->created_at,

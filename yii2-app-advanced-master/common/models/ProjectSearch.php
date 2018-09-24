@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\models;
+namespace common\models;
 
 use Yii;
 use yii\base\Model;
@@ -18,8 +18,7 @@ class ProjectSearch extends Project
     public function rules()
     {
         return [
-            [['id', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
-            [['active'], 'boolean'],
+            [['id', 'active', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['title', 'description'], 'safe'],
         ];
     }

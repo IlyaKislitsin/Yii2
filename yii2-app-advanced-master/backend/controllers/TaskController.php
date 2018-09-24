@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Task;
-use backend\models\TaskSearch;
+use common\models\TaskSearch;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
