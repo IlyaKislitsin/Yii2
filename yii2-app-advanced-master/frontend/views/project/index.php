@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
+/* @var $searchModel frontend\models\ProjectSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Мои проекты';
@@ -17,6 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'columns' => [
             [
                 'attribute' => 'title',
@@ -32,8 +34,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             'style' => 'color: #337ab7'
                             ],
                     'value' =>  function (\common\models\Project $model) {
-                        return  join(', ', $model->getProjectUsers()->select('role')
-                            ->andWhere(['user_id' => Yii::$app->user->id])->column());
+                        return  join(', ', Yii::$app->projectService->getRoles(
+                            $model, Yii::$app->user->identity));
                     }
             ],
             [   'attribute' => 'active',

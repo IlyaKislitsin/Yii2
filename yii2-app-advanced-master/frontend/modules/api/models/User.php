@@ -29,6 +29,6 @@ class User extends \common\models\User
      */
     public function extraFields()
     {
-        return ['projectUsers'];
+        return [self::RELATION_PROJECT_USERS];
     }
 }

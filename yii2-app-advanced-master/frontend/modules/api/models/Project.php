@@ -28,6 +28,6 @@ class Project extends \common\models\Project
      */
     public function extraFields()
     {
-        return ['projectUsers'];
+        return [self::RELATION_PROJECT_USERS];
     }
 }

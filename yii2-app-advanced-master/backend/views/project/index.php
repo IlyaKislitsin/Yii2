@@ -26,6 +26,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             'id',
             'title',
+            [
+                'attribute' => 'roles',
+                'headerOptions' => [
+                    'style' => 'color: #337ab7'
+                ],
+                'value' =>  function (\common\models\Project $model) {
+                    return  join(', ', Yii::$app->projectService->getRoles(
+                        $model, Yii::$app->user->identity));
+                }
+            ],
             'description:ntext',
             [   'attribute' => 'active',
                 'filter'    => \common\models\Project::STATUS_LIST,
@@ -33,8 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return \common\models\Project::STATUS_LIST[$model->active] ;
                 }
             ],
-//            'created_by',
-//            'updated_by',
+
             'created_at:datetime',
             'updated_at:datetime',
 

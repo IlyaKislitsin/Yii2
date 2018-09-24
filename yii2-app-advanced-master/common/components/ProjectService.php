@@ -9,6 +9,7 @@
 namespace common\components;
 
 
+use common\models\ProjectUser;
 use yii\base\Event;
 
 class AssignRoleEvent extends Event
@@ -37,6 +38,11 @@ class ProjectService extends Component
 {
     const EVENT_ASSIGN_ROLE = 'assign_role';
 
+    /**
+     * @param Project $project
+     * @param User $user
+     * @param $role
+     */
     public function assignRole(Project $project, User $user, $role)
     {
         $event = new AssignRoleEvent();
@@ -44,5 +50,33 @@ class ProjectService extends Component
         $event->user = $user;
         $event->role = $role;
         $this->trigger(self::EVENT_ASSIGN_ROLE, $event);
+    }
+
+    /**
+     * @param Project $project
+     * @param User $user
+     * @return array
+     */
+    public function getRoles(Project $project, User $user)
+    {
+        return ProjectUser::find()->select('role')
+            ->andWhere(['project_id' => $project->id, 'user_id' => $user->id])->column();
+    }
+
+    /**
+     * @param Project $project
+     * @param User $user
+     * @param $role
+     * @return bool
+     */
+    public function hasRole(Project $project, User $user, $role)
+    {
+        $roles = $this->getRoles($project, $user);
+        foreach($roles as $item => $value) {
+            if ($roles[$item] === $role) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -11,11 +11,6 @@ use common\models\ProjectUser;
  */
 class ProjectUserQuery extends \yii\db\ActiveQuery
 {
-    /*public function active()
-    {
-        return $this->andWhere('[[status]]=1');
-    }*/
-
     /**
      * @param $userId
      * @param null $role
@@ -37,6 +32,15 @@ class ProjectUserQuery extends \yii\db\ActiveQuery
     public function byProject($projectId)
     {
         return $this->andWhere(['project_id' => $projectId]);
+    }
+
+    /**
+     * @param string $role
+     * @return ProjectUserQuery
+     */
+    public function byRole($role)
+    {
+        return $this->andWhere(['role' => $role]);
     }
 
     /**

@@ -53,7 +53,7 @@ class Task extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'estimation', 'project_id','created_by', 'created_at'], 'required'],
+            [['title', 'description', 'project_id'], 'required'],
             [['description'], 'string'],
             [['estimation', 'project_id', 'executor_id', 'started_at', 'completed_at', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['title'], 'string', 'max' => 255],
@@ -71,16 +71,17 @@ class Task extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
-            'description' => 'Description',
-            'estimation' => 'Estimation',
-            'executor_id' => 'Executor ID',
-            'started_at' => 'Started At',
-            'completed_at' => 'Completed At',
-            'created_by' => 'Created By',
-            'updated_by' => 'Updated By',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'title' => 'Название',
+            'description' => 'Описание',
+            'estimation' => 'Оценка',
+            'project_id' => 'Проект',
+            'executor_id' => 'Исполнитель',
+            'started_at' => 'Работа начата',
+            'completed_at' => 'Работа завершена',
+            'created_by' => 'Задачу создал',
+            'updated_by' => 'Задачу изменил',
+            'created_at' => 'Задача создана',
+            'updated_at' => 'Задача изменена',
         ];
     }
 

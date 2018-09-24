@@ -83,7 +83,7 @@ class Project extends \yii\db\ActiveRecord
             'description' => 'Описание',
             'active' => 'Состояние проекта',
             'projectUsers' => 'Участники проекта',
-            'roles' => 'Роли в проекте',
+            'roles' => 'Мои роли в проекте',
             'created_by' => 'Кем создан',
             'updated_by' => 'Кем изменён',
             'created_at' => 'Дата создания',

@@ -20,11 +20,28 @@ $user = Yii::$app->user->identity;
 
         <div class="navbar-custom-menu">
 
+            <?php if(Yii::$app->user->isGuest): ?>
+
+            <div class="pull-right">
+
+                <?= Html::a(
+                    'Login',
+                    ['site/login'],
+                    [
+                        'class' => 'btn btn-primary btn-outline-primary',
+                        'style' => 'border-color:#222d32; background-color:#367fa9; margin:8px 20px; box-sizing:border-box']
+                ) ?>
+
+            </div>
+
+            <?php else: ?>
+
              <ul class="nav navbar-nav">
 
                 <!-- Messages: style can be found in dropdown.less-->
 
                 <!-- User Account: style can be found in dropdown.less -->
+
 
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -68,6 +85,9 @@ $user = Yii::$app->user->identity;
                     <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
                 </li>
             </ul>
+
+            <?php endif; ?>
+
         </div>
     </nav>
 </header>

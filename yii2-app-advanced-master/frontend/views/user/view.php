@@ -7,37 +7,51 @@ use yii\widgets\DetailView;
 /* @var $model common\models\User */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
+$this->params['breadcrumbs'][] = 'Users';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <?php if ($model->id === Yii::$app->user->id): ?>
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
+        <?= Html::a('Редактировать', ['profile', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
-
+    <?php endif; ?>
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
+            [
+                'attribute' => 'avatar',
+                'format'    => 'image',
+                'value'     => function (\common\models\User $model) {
+                    return  $model->getThumbUploadUrl('avatar', \common\models\User::AVATAR_MEDIUM);
+                }
+            ],
             'id',
             'username',
-            'auth_key',
-            'password_hash',
-            'password_reset_token',
             'email:email',
-            'status',
-            'created_at',
-            'updated_at',
+            [
+                'attribute' => 'status',
+                'value' => \common\models\User::STATUS_LIST[$model->status]
+            ],
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
+
+    <?php echo \yii2mod\comments\widgets\Comment::widget([
+        'model' => $model,
+        'relatedTo' => 'User ' . \Yii::$app->user->identity->username . ' commented on the page ' . \yii\helpers\Url::current(),
+        'maxLevel' => 2,
+        'dataProviderConfig' => [
+            'pagination' => [
+                'pageSize' => 10
+            ],
+        ],
+        'listViewConfig' => [
+            'emptyText' => Yii::t('app', 'No comments found.'),
+        ],
+    ]); ?>
 
 </div>

@@ -2,11 +2,14 @@
 
 namespace frontend\controllers;
 
-use frontend\modules\api\models\User;
+use common\models\Task;
+use common\models\User;
+use frontend\models\ProjectSearch;
+use tests\models\ProjectUser;
 use Yii;
 use common\models\Project;
-use frontend\models\ProjectSearch;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -23,6 +26,15 @@ class ProjectController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -38,17 +50,17 @@ class ProjectController extends Controller
      */
     public function actionIndex()
     {
-//        $searchModel = new ProjectSearch();
-//        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new ProjectSearch();
 
         $dataProvider = new ActiveDataProvider([
             'query' => Project::find()->byUser(Yii::$app->user->id)
         ]);
 
+
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel
         ]);
-//        return VarDumper::dumpAsString($dataProvider, 10, true);
     }
 
     /**
@@ -59,9 +71,28 @@ class ProjectController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        $query = $model->getProjectUsers()
+            ->select('user_id')->indexBy('user_id')->column();
+        $users = User::find()->select('username')
+            ->andWhere(['id' => $query])->column();
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'users' => $users
         ]);
+    }
+
+    public function actionTest()
+    {
+        return VarDumper::dumpAsString(Yii::$app->taskService->canComplete(
+            Task::findOne(1),
+            User::findOne(3)),
+            10, true);
+//        return VarDumper::dumpAsString($project = \common\models\Project::find()->select('title')
+//            ->andWhere(['id' => 1])->column(), 10, true);
+//        return $_SERVER['REQUEST_TIME'];
+
     }
 
 

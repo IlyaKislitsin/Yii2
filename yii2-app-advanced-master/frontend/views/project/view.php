@@ -5,6 +5,8 @@ use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Project */
+/* @var $users array */
+
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Проекты', 'url' => ['index']];
@@ -24,15 +26,27 @@ $this->params['breadcrumbs'][] = $this->title;
             'title',
             'description:ntext',
             [
-                'attribute' => 'active',
-                'value'     => function (\common\models\Project $model) {
-                    return  \common\models\Project::STATUS_LIST[$model->active];
+                'attribute' => 'projectUsers',
+                'value' =>  join(', ', $users)
+            ],
+            [
+                'attribute' => 'roles',
+                'headerOptions' => [
+                    'style' => 'color: #337ab7'
+                ],
+                'value' =>  function (\common\models\Project $model) {
+                    return  join(', ', Yii::$app->projectService->getRoles(
+                        $model, Yii::$app->user->identity));
                 }
+            ],
+            [
+                'attribute' => 'active',
+                'value'     => \common\models\Project::STATUS_LIST[$model->active]
             ],
             [
                 'attribute' => 'created_by',
                 'value'     => function (\common\models\Project $model) {
-                    $user = \common\models\User::find()->where(['id' => $model->created_by])->one();
+                    $user = \common\models\User::findOne($model->created_by);
                     return  $user->username;
                 }
             ],
@@ -40,12 +54,26 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'updated_by',
                 'value'     => function (\common\models\Project $model) {
-                    $user = \common\models\User::find()->where(['id' => $model->updated_by])->one();
+                    $user = \common\models\User::findOne($model->updated_by);
                     return  $user->username;
                 }
             ],
             'updated_at:datetime',
         ],
     ]) ?>
+
+    <?php echo \yii2mod\comments\widgets\Comment::widget([
+        'model' => $model,
+        'relatedTo' => 'User ' . \Yii::$app->user->identity->username . ' commented on the page ' . \yii\helpers\Url::current(),
+        'maxLevel' => 2,
+        'dataProviderConfig' => [
+            'pagination' => [
+                'pageSize' => 10
+            ],
+        ],
+        'listViewConfig' => [
+            'emptyText' => Yii::t('app', 'No comments found.'),
+        ],
+    ]); ?>
 
 </div>

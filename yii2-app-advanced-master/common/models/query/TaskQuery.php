@@ -2,6 +2,7 @@
 
 namespace common\models\query;
 
+
 /**
  * This is the ActiveQuery class for [[\common\models\Task]].
  *
@@ -9,10 +10,14 @@ namespace common\models\query;
  */
 class TaskQuery extends \yii\db\ActiveQuery
 {
-    /*public function active()
+    /**
+     * @param $userId
+     * @return TaskQuery
+     */
+    public function byUser($userId)
     {
-        return $this->andWhere('[[status]]=1');
-    }*/
+        return $this->andWhere(['executor_id' => $userId]);
+    }
 
     /**
      * {@inheritdoc}

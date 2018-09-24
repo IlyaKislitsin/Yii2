@@ -6,8 +6,19 @@ return [
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
+        'authManager' => [
+            'class' => 'yii\rbac\PhpManager',
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
+        ],
+        'i18n' => [
+            'translations' => [
+                'yii2mod.comments' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@yii2mod/comments/messages',
+                ],
+            ],
         ],
         'projectService' => [
             'class' => \common\components\ProjectService::class,
@@ -25,11 +36,17 @@ return [
         ],
         'emailService' => [
             'class' => \common\components\EmailService::class,
+        ],
+        'taskService' => [
+            'class' => \common\components\TaskService::class
         ]
     ],
     'modules' => [
         'chat' => [
             'class' => 'common\modules\chat\Module'
-        ]
+        ],
+        'comment' => [
+            'class' => 'yii2mod\comments\Module',
+        ],
     ],
 ];

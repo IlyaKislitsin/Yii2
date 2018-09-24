@@ -2,6 +2,7 @@
 
 namespace common\models\query;
 
+use common\models\Project;
 use common\models\ProjectUser;
 
 /**
@@ -11,10 +12,13 @@ use common\models\ProjectUser;
  */
 class ProjectQuery extends \yii\db\ActiveQuery
 {
-    /*public function active()
+    /**
+     * @return ProjectQuery
+     */
+    public function onlyActive()
     {
-        return $this->andWhere('[[status]]=1');
-    }*/
+        return $this->andWhere(['active' => Project::STATUS_ACTIVE]);
+    }
 
     /**
      * @param $userId

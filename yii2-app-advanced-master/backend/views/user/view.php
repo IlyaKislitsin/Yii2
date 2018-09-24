@@ -37,14 +37,25 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'id',
             'username',
-//            'auth_key',
-//            'password_hash',
-//            'password_reset_token',
             'email:email',
             'status',
             'created_at:datetime',
             'updated_at:datetime',
         ],
     ]) ?>
+
+    <?php echo \yii2mod\comments\widgets\Comment::widget([
+        'model' => $model,
+        'relatedTo' => 'User ' . \Yii::$app->user->identity->username . ' commented on the page ' . \yii\helpers\Url::current(),
+        'maxLevel' => 2,
+        'dataProviderConfig' => [
+            'pagination' => [
+                'pageSize' => 10
+            ],
+        ],
+        'listViewConfig' => [
+            'emptyText' => Yii::t('app', 'No comments found.'),
+        ],
+    ]); ?>
 
 </div>

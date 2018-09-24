@@ -13,7 +13,6 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'username')->textInput() ?>
-    <?= $form->field($model, 'email')->textInput() ?>
     <?= $form->field($model, 'password')->passwordInput() ?>
     <?= $form->field($model, 'status')->dropDownList(\common\models\User::STATUS_LIST) ?>
     <?= $form->field($model, 'avatar')->fileInput()

@@ -44,7 +44,14 @@ class LoginForm extends Model
             $user = $this->getUser();
             if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute, 'Incorrect username or password.');
+                Yii::error('Неудачная попытка авторизации пользователя. Неверный логин или пароль', 'auth');
             }
+
+            if ($user && isset(Yii::$app->params['admins']) && !in_array($user->id, Yii::$app->params['admins'])) {
+                $this->addError($attribute, 'У вас нет необходих прав доступа!');
+                Yii::error('Неудачная попытка авторизации. У пользователя нет необходимых прав доступа.', 'auth');
+            }
+
         }
     }
 
@@ -55,7 +62,9 @@ class LoginForm extends Model
      */
     public function login()
     {
+        $user = $this->getUser();
         if ($this->validate()) {
+            Yii::info('Пользователь ' . $user->id . ': ' . $user->username . ' успешно авторизован.', 'auth');
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
         }
         

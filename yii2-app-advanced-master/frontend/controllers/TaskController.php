@@ -2,9 +2,12 @@
 
 namespace frontend\controllers;
 
+use common\models\ProjectUser;
 use Yii;
 use common\models\Task;
 use frontend\models\TaskSearch;
+use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -20,14 +23,27 @@ class TaskController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'take' => ['POST'],
+                    'complete' => ['POST'],
                 ],
             ],
         ];
     }
+
+
 
     /**
      * Lists all Task models.
@@ -37,10 +53,47 @@ class TaskController extends Controller
     {
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 8;
+
+        $developers = \common\models\User::find()->select('username')
+            ->onlyActiveByRole(\common\models\ProjectUser::ROLE_DEVELOPER)->indexBy('id')->column();
+        $managers = \common\models\User::find()->select('username')
+            ->onlyActiveByRole(\common\models\ProjectUser::ROLE_MANAGER)->indexBy('id')->column();
+        $projects = \common\models\Project::find()->select('title')
+            ->onlyActive()->indexBy('id')->column();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'developers' => $developers,
+            'managers' => $managers,
+            'projects' => $projects,
+        ]);
+    }
+
+    /**
+     * * Lists Task models from User->identity.
+     * @return mixed
+     */
+    public function actionMy ()
+    {
+        $searchModel = new TaskSearch();
+        $dataProvider = New ActiveDataProvider([
+            'query' => Task::find()->byUser(Yii::$app->user->id)
+        ]);
+        $dataProvider->pagination->pageSize = 8;
+
+        $managers = \common\models\User::find()->select('username')
+            ->onlyActiveByRole(\common\models\ProjectUser::ROLE_MANAGER)->indexBy('id')->column();
+
+        $projects = \common\models\Project::find()->select('title')
+            ->onlyActive()->indexBy('id')->column();
+
+        return $this->render('my', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'managers' => $managers,
+            'projects' => $projects,
         ]);
     }
 
@@ -53,7 +106,7 @@ class TaskController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($id)
         ]);
     }
 
@@ -67,11 +120,17 @@ class TaskController extends Controller
         $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Задача успешно создана');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $projects = \common\models\Project::find()->select('title')
+            ->byUser(Yii::$app->user->id, \common\models\ProjectUser::ROLE_MANAGER)->indexBy('id')->column();
+
+
         return $this->render('create', [
             'model' => $model,
+            'projects' => $projects
         ]);
     }
 
@@ -87,11 +146,16 @@ class TaskController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Задача успешно отредактирована');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $projects = \common\models\Project::find()->select('title')
+            ->byUser(Yii::$app->user->id, \common\models\ProjectUser::ROLE_MANAGER)->indexBy('id')->column();
+
         return $this->render('update', [
             'model' => $model,
+            'projects' => $projects
         ]);
     }
 
@@ -105,9 +169,40 @@ class TaskController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+        Yii::$app->session->setFlash('success', 'Задача успешно удалена');
         return $this->redirect(['index']);
     }
+
+    /**
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionTake($id)
+    {
+        $model = $this->findModel($id);
+
+        if(Yii::$app->taskService->takeTask($model, Yii::$app->user->identity)) {
+            Yii::$app->session->setFlash('success', 'Задача успешно взята в работу');
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+    }
+
+    /**
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionComplete($id)
+    {
+        $model = $this->findModel($id);
+
+        if(Yii::$app->taskService->completeTask($model)) {
+            Yii::$app->session->setFlash('success', 'Работа с задачей успешно завершена');
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+    }
+
 
     /**
      * Finds the Task model based on its primary key value.
